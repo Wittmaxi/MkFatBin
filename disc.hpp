@@ -16,7 +16,11 @@ public:
     uint16_t sectorsPerFAT = 0x9;
     uint16_t sectorsPerTrack = 0x12;
     uint16_t headCount = 0x2;
-    uint32_t hiddenSectors = 0xFFFFFFFF;
+    uint32_t hiddenSectors = 0x0;
+    uint32_t largeSectorCount = 0x0;
+    // extended BPB
+    char volumeLabel[11] = "VOLUMELABL";
+    char systemIdentifierString[8] = "FAT12";
 };
 
 class Disc {
@@ -30,5 +34,5 @@ public:
     Disc (DiscSettings);
     void dumpToFile (const std::string &fileName);
     void loadBootSector (const std::string &fileName);
-    void addFile (std::string &);
+    void addFile (std::string &fileName);
 };

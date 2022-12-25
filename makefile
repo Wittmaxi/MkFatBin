@@ -2,4 +2,4 @@ default:
 	clang++ ./*.cpp -o mkfatbin -lCMD
 
 run: default
-	./mkfatbin
+	./mkfatbin -b bootsector.bin -o flop.bin

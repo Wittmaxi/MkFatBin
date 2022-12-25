@@ -4,6 +4,8 @@
 
 Disc::Disc (DiscSettings set) {
     settings = set;
+    rawSectors.push_back (std::vector <char> (0)); // always have at least a bootsector
+    writeSettingsToBootsector();
 }
 
 inline void padWithNulls (int amount, std::ofstream &file) {
@@ -35,21 +37,13 @@ void Disc::dumpToFile (const std::string &fileName) {
     for (int i = 0; i < rawSectors.size(); i++)
         dumpSectorToFile (i, file);
 
-    std::cout << "HI" << std::endl;
     int missingBytes = (settings.totalSectors - rawSectors.size()) * settings.bytesPerSector;
-    std::cout << rawSectors.size() << std::endl;
-    std::cout << settings.totalSectors;
-    std::cout << missingBytes << std::endl;
     padWithNulls (missingBytes, file);
 
-    std::cout << "HI---" << std::endl;
     file.flush();
-    std::cout << "HI---" << std::endl;
 }
 
 inline void Disc::readBootSector (const std::string &fileName) {
-    if (rawSectors.size() == 0)
-        rawSectors.push_back (std::vector <char> (0));
     std::vector<char> &bs = rawSectors [0];
 
     bs.resize(settings.bytesPerSector); 
@@ -58,6 +52,9 @@ inline void Disc::readBootSector (const std::string &fileName) {
 }
 
 inline void Disc::writeSettingsToBootsector () {
+    if (rawSectors[0].size() < 36)
+        rawSectors[0].resize(36); // make sure that we have enough space
+
     std::memcpy (rawSectors [0].data() + 3, &settings.OEM, 8);
     std::memcpy (rawSectors [0].data() + 11, reinterpret_cast <char*>(&settings.bytesPerSector), 2);
     std::memcpy (rawSectors [0].data() + 13, reinterpret_cast <char*>(&settings.sectorsPerCluster), 1);
@@ -70,6 +67,10 @@ inline void Disc::writeSettingsToBootsector () {
     std::memcpy (rawSectors [0].data() + 24, reinterpret_cast <char*>(&settings.sectorsPerTrack), 2);
     std::memcpy (rawSectors [0].data() + 26, reinterpret_cast <char*>(&settings.headCount), 2);
     std::memcpy (rawSectors [0].data() + 28, reinterpret_cast <char*>(&settings.hiddenSectors), 4);
+    std::memcpy (rawSectors [0].data() + 32, reinterpret_cast <char*>(&settings.largeSectorCount), 4);
+    rawSectors[0][38] = 0x28;
+    std::memcpy (rawSectors [0].data() + 43, &settings.volumeLabel, 11);
+    std::memcpy (rawSectors [0].data() + 54, &settings.systemIdentifierString, 8);
 }
 
 void Disc::loadBootSector (const std::string &fileName) {
