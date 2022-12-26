@@ -37,7 +37,7 @@ class Disc {
 //////
     int FATsector = 0;
     int rootSector = 0;
-    int rootSize = 0;
+    int rootSizeBytes = 0;
 //////
     void dumpSectorToFile (int sectorNumber, std::ofstream &file);
     void readBootSector (const std::string& fileName);
