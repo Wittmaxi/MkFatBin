@@ -2,13 +2,14 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <filesystem>
 
 class __attribute__((__packed__)) DiscSettings {
 public:
     char OEM[8] = { 'M', 'A', 'X', 'I', 'F', 'A', 'T', 0 };
     uint16_t bytesPerSector = 0x200;
     uint8_t sectorsPerCluster = 0x1;
-    uint16_t reservedSectors = 0x0;
+    uint16_t reservedSectors = 0x1;
     uint8_t numberFAT = 0x2; // by default, write two FATs
     uint16_t rootEntries = 0xE0;
     uint16_t totalSectors = 0xB40; // 1.44MB 
@@ -32,6 +33,12 @@ class Disc {
     std::vector<std::vector<char>> rawSectors;
     DiscSettings settings;
 //////
+    int nextFreeSector;
+//////
+    int FATsector = 0;
+    int rootSector = 0;
+    int rootSize = 0;
+//////
     void dumpSectorToFile (int sectorNumber, std::ofstream &file);
     void readBootSector (const std::string& fileName);
     void writeSettingsToBootsector();
@@ -39,5 +46,5 @@ public:
     Disc (DiscSettings);
     void dumpToFile (const std::string &fileName);
     void loadBootSector (const std::string &fileName);
-    void addFile (std::string &fileName);
+    void addFile (const std::filesystem::directory_entry &fileName);
 };

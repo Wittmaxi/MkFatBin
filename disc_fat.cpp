@@ -1,5 +1,6 @@
 #include "disc.hpp"
 
-void addFile (std::string &fileName) {
+
+void Disc::addFile (const std::filesystem::directory_entry &fileName) {
 
 }

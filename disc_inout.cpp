@@ -6,6 +6,14 @@ Disc::Disc (DiscSettings set) {
     settings = set;
     rawSectors.push_back (std::vector <char> (0)); // always have at least a bootsector
     writeSettingsToBootsector();
+    FATsector = set.reservedSectors + set.hiddenSectors;
+    rootSector = FATsector + set.numberFAT * set.sectorsPerFAT;
+    rootSize = 32 * set.rootEntries;
+    nextFreeSector = rootSector + rootSize / set.bytesPerSector;
+    std::cout << FATsector << "\n";
+    std::cout << rootSector << "\n";
+    std::cout << rootSize << "\n";
+    std::cout << nextFreeSector << "\n";
 }
 
 inline void padWithNulls (int amount, std::ofstream &file) {
