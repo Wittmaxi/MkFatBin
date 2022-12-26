@@ -52,25 +52,11 @@ inline void Disc::readBootSector (const std::string &fileName) {
 }
 
 inline void Disc::writeSettingsToBootsector () {
-    if (rawSectors[0].size() < 36)
-        rawSectors[0].resize(36); // make sure that we have enough space
+    constexpr int bpbSize = sizeof (DiscSettings);
+    if (rawSectors[0].size() < bpbSize + 3)
+        rawSectors[0].resize(bpbSize + 3); // make sure that we have enough space
 
-    std::memcpy (rawSectors [0].data() + 3, &settings.OEM, 8);
-    std::memcpy (rawSectors [0].data() + 11, reinterpret_cast <char*>(&settings.bytesPerSector), 2);
-    std::memcpy (rawSectors [0].data() + 13, reinterpret_cast <char*>(&settings.sectorsPerCluster), 1);
-    std::memcpy (rawSectors [0].data() + 14, reinterpret_cast <char*>(&settings.reservedSectors), 2);
-    std::memcpy (rawSectors [0].data() + 16, reinterpret_cast <char*>(&settings.numberFAT), 1);
-    std::memcpy (rawSectors [0].data() + 17, reinterpret_cast <char*>(&settings.rootEntries), 2);
-    std::memcpy (rawSectors [0].data() + 19, reinterpret_cast <char*>(&settings.totalSectors), 2);
-    std::memcpy (rawSectors [0].data() + 21, reinterpret_cast <char*>(&settings.mediaDescriptor), 1);
-    std::memcpy (rawSectors [0].data() + 22, reinterpret_cast <char*>(&settings.sectorsPerFAT), 2);
-    std::memcpy (rawSectors [0].data() + 24, reinterpret_cast <char*>(&settings.sectorsPerTrack), 2);
-    std::memcpy (rawSectors [0].data() + 26, reinterpret_cast <char*>(&settings.headCount), 2);
-    std::memcpy (rawSectors [0].data() + 28, reinterpret_cast <char*>(&settings.hiddenSectors), 4);
-    std::memcpy (rawSectors [0].data() + 32, reinterpret_cast <char*>(&settings.largeSectorCount), 4);
-    rawSectors[0][38] = 0x28;
-    std::memcpy (rawSectors [0].data() + 43, &settings.volumeLabel, 11);
-    std::memcpy (rawSectors [0].data() + 54, &settings.systemIdentifierString, 8);
+    std::memcpy (rawSectors [0].data() + 3, reinterpret_cast <char*>(&settings), bpbSize);
 }
 
 void Disc::loadBootSector (const std::string &fileName) {

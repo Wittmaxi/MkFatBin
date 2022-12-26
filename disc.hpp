@@ -3,7 +3,7 @@
 #include <string>
 #include <fstream>
 
-class DiscSettings {
+class __attribute__((__packed__)) DiscSettings {
 public:
     char OEM[8] = { 'M', 'A', 'X', 'I', 'F', 'A', 'T', 0 };
     uint16_t bytesPerSector = 0x200;
@@ -19,9 +19,14 @@ public:
     uint32_t hiddenSectors = 0x0;
     uint32_t largeSectorCount = 0x0;
     // extended BPB
+    uint8_t driveNumber = 0x0; // ignore
+    uint8_t winNTFlags = 0x0; // ignore
+    uint8_t signature = 0x28;
+    uint32_t volumeID = 0x0; // ignore
     char volumeLabel[11] = "VOLUMELABL";
     char systemIdentifierString[8] = "FAT12";
 };
+
 
 class Disc {
     std::vector<std::vector<char>> rawSectors;
