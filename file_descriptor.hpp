@@ -19,8 +19,8 @@ uint8_t getFileAttribute (const std::filesystem::directory_entry &dir) {
         return 0x10;
 }
 
-std::vector<char> getFDesc (const std::filesystem::directory_entry &dir) {
-    std::vector <char> ret (32, 0);
+std::vector<uint8_t> getFDesc (const std::filesystem::directory_entry &dir) {
+    std::vector <uint8_t> ret (32, 0);
 
     std::memcpy (ret.data(), getSmallFileName (dir).data(), 11);
     ret[11] = getFileAttribute (dir);
@@ -50,9 +50,6 @@ std::vector<char> getFDesc (const std::filesystem::directory_entry &dir) {
     uint32_t fileSize = dir.is_regular_file() ? dir.file_size() : 0;
     std::memcpy (ret.data() + 28, reinterpret_cast<char*>(&fileSize), 4);
 
-    for (auto i: ret)
-        std::cout << (int)(i == 0 ? '\0' : i) << " ";
-    std::cout << "\n";
 
     return ret;
 }

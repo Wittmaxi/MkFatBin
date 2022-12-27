@@ -18,7 +18,7 @@ Utility to create FAT-formatted binary files which \n \
 can be used by QEMU or BOCHs, or can be mounted as \n \
 normal files. \n \
 \n \
-By default, assumes FAT12. (support for further FATs might come later) \n \
+By default, assumes FAT16. (support for further FATs might come later) \n \
 \n \
 \t -h \n \
 \t \t display this message \n\n \

@@ -3,12 +3,13 @@
 #include <string>
 #include <fstream>
 #include <filesystem>
+#include <tuple>
 
 class __attribute__((__packed__)) DiscSettings {
 public:
     char OEM[8] = { 'M', 'A', 'X', 'I', 'F', 'A', 'T', 0 };
-    uint16_t bytesPerSector = 0x200;
-    uint8_t sectorsPerCluster = 0x1;
+    uint16_t bytesPerSector = 0x200; // my program assumes that bytesPerSector % 32 == 0. TODO: fix writing mechanism
+    uint8_t sectorsPerCluster = 0x1; // my code is written to only support this... TODO: fix
     uint16_t reservedSectors = 0x1;
     uint8_t numberFAT = 0x2; // by default, write two FATs
     uint16_t rootEntries = 0xE0;
@@ -42,6 +43,10 @@ class Disc {
     void dumpSectorToFile (int sectorNumber, std::ofstream &file);
     void readBootSector (const std::string& fileName);
     void writeSettingsToBootsector();
+    void indexInFAT (int startSector, int numberSectors);
+    void writeFileToSectors (const std::filesystem::directory_entry &file);
+    void writeRootEntry (const std::vector<uint8_t> &fDesc);
+    std::tuple<int, int> calcNextEmptyRootIndex ();
 public:
     Disc (DiscSettings);
     void dumpToFile (const std::string &fileName);

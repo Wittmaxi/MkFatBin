@@ -10,6 +10,9 @@ Disc::Disc (DiscSettings set) {
     rootSector = FATsector + set.numberFAT * set.sectorsPerFAT;
     rootSizeBytes = 32 * set.rootEntries;
     nextFreeSector = rootSector + rootSizeBytes / set.bytesPerSector;
+
+    for (int i = 0; i < nextFreeSector; i++)
+        rawSectors.push_back (std::vector<char> (set.bytesPerSector)); // make sure that atleast the sys-segments are filled. TODO remove because inefficient
 }
 
 inline void padWithNulls (int amount, std::ofstream &file) {
