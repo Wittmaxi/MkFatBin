@@ -16,7 +16,7 @@ In order to install the tool, run
 
 ```
 make install
-``
+```
 
 Installation requires clang++ with support for c++17r.
 
