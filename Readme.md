@@ -4,9 +4,9 @@ Utility that I wrote as part of my OSDev-Endeavours. This is both a learning pro
 
 ### usage
 
--) create a folder with the files that should be mapped to the FS. Specify it with `-d <directory>`
--) (optional) create a bootsector - if you want it to be flagged as bootable you need to set it's two upmost bytes to "0xAA 0x55". Specify the file with `-d <file.bin>`
--) define a name for an output file, Defaults to "out.bin". Specify with "-o <file.bin>"
+- create a folder with the files that should be mapped to the FS. Specify it with `-d <directory>`
+- (optional) create a bootsector - if you want it to be flagged as bootable you need to set it's two upmost bytes to "0xAA 0x55". Specify the file with `-d <file.bin>`
+- define a name for an output file, Defaults to "out.bin". Specify with "-o <file.bin>"
 
 Run `mkfatbin -h` for extensive help.
 
