@@ -23,10 +23,10 @@ public:
     // extended BPB
     uint8_t driveNumber = 0x0; // ignore
     uint8_t winNTFlags = 0x0; // ignore
-    uint8_t signature = 0x28;
+    uint8_t signature = 0x29; // FAT16 - TODO CHECK if this flag actually has any relevance
     uint32_t volumeID = 0x0; // ignore
     char volumeLabel[11] = "VOLUMELABL";
-    char systemIdentifierString[8] = "FAT12";
+    char systemIdentifierString[8] = "FAT16";
 };
 
 

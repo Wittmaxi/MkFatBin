@@ -72,12 +72,12 @@ void Disc::writeRootEntry (const std::vector<uint8_t> &fDesc) {
 void Disc::addFile (const std::filesystem::directory_entry &file) {
     if (file.is_directory()) return; // TODO handle dirs
 
-    int fileStartSector = nextFreeSector; 
+    int fileStartCluster = nextFreeSector;
 
     writeFileToSectors (file);
     std::vector <uint8_t> fDesc = getFDesc (file);
-    fDesc [27] = (uint8_t) fileStartSector;
-    fDesc [26] = (uint8_t) fileStartSector >> 8;
+    fDesc [26] = (uint8_t) fileStartCluster;
+    fDesc [27] = (uint8_t) fileStartCluster >> 8;
 
     writeRootEntry (fDesc);
 }
