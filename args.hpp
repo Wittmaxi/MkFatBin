@@ -30,7 +30,7 @@ By default, assumes FAT16. (support for further FATs might come later) \n \
 \t\t Can be left out, in which case the boot sector will be used only for the BPB. \n\n \
 \t -o <file>\n \
 \t\t output file. Defaults to out.bin \n\n \
-\t -d <director> \n \
+\t -d <directory> \n \
 \t\t Directory of the file, which will be formatted onto the floppy.\n \
 \t\t Required argument." << std::endl; 
 
