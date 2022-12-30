@@ -13,10 +13,9 @@ std::string getSmallFileName (const std::filesystem::directory_entry &dir) {
 }
 
 uint8_t getFileAttribute (const std::filesystem::directory_entry &dir) {
-    if (dir.is_regular_file())
-        return 0x0;
     if (dir.is_directory())
         return 0x10;
+    return 0x0;
 }
 
 std::vector<uint8_t> getFDesc (const std::filesystem::directory_entry &dir) {
