@@ -42,8 +42,6 @@ void RawDisc::writeFileToSector (SecOff sector, std::ifstream& file) {
     Sector &outSec = getSectorAt (sector);
 
     file.read ((char*)outSec.data() + sector.offset, outSec.size() - sector.offset);
-    
-    outSec [0] = sector.sector;
 }
 
 void RawDisc::writeFileToContiguousSectors (SecOff startSector, const std::filesystem::directory_entry &file) {
