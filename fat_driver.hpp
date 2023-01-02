@@ -22,7 +22,7 @@ class FATDriver {
     void readBootSector (const std::string& fileName);
     void writeSettingsToBootsector();
     void indexInFAT (ClusOff startSector, int numberSectors);
-    void writeFATEntry (ClusOff cluster, uint16_t newValue);
+    void writeFATEntry (int cluster, uint16_t newValue);
     void writeRootEntry (const std::vector<uint8_t> &fDesc);
     void setupFAT ();
     SecOff calcNextEmptyEntryIndex ();
