@@ -30,7 +30,6 @@ inline void FATDriver::setupFAT () {
 
 void FATDriver::writeFATEntry (int cluster, uint16_t value) {
     SecOff offsetInFATMap = FATSector;
-    std::cout << "writing to cluster " << cluster + 1 << " value: " << value << "\n";
     offsetInFATMap.addOff ((cluster - 1 + 2) * 2); // each cluster takes up two bytes in the FAT
     std::vector<uint8_t> toWrite ((uint8_t*)&value, (uint8_t*)&value + 2);
     disc.writeArrayToContiguousSectors (offsetInFATMap, toWrite);
@@ -72,9 +71,6 @@ void FATDriver::addFile (const std::filesystem::directory_entry &file) {
     ClusOff fileStartCluster = nextFreeSector.toClusOff();
     disc.writeFileToContiguousSectors (nextFreeSector, file);
 
-    std::cout << "NFS = " << nextFreeSector.sector << "\n";
-    std::cout << "FSC = " << fileStartCluster.cluster << "\n";
-
     int sizeInSectors = file.file_size() / settings.bytesPerSector + 1;
     nextFreeSector = nextFreeSector + sizeInSectors;
 
@@ -82,13 +78,10 @@ void FATDriver::addFile (const std::filesystem::directory_entry &file) {
 
     std::vector <uint8_t> fDesc = getFDesc (file);
     uint16_t filePos = fileStartCluster.cluster + 1;
-    std::cout << filePos << " FILEPOS \n";
     fDesc [26] = (uint8_t) filePos;
     fDesc [27] = (uint8_t) filePos >> 8;
-    std::cout << "writing root entry \n";
 
     writeRootEntry (fDesc);
-    std::cout << "root entry written \n"; 
 }
 
 inline void FATDriver::readBootSector (const std::string &fileName) {

@@ -12,7 +12,7 @@ struct ProgramSettings {
 };
 
 void displayHelp () {
-    std::cout << "\n \
+    std::cout << "\
 MkFatBin - Copyright Maximilian Wittmer - 2022 \n \
 \n \
 Utility to create FAT-formatted binary files which \n \
@@ -55,8 +55,11 @@ ProgramSettings processFlags (CMD::commander &cmd) {
 
     if (cmd.isFlagSet ("-d"))
         ret.flopDir = cmd.getFlagValue("-d");
-    else
-        std::cerr << "[ERROR] Expected -d. Run mkfatbin with -h for more information\n";
+    else {
+        std::cerr << "[ERROR] Expected -d. \n";
+        displayHelp();
+        ret.execute = false;
+    }
 
     return ret;
 }
