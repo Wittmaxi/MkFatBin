@@ -10,13 +10,11 @@ inline void padWithNulls (int amount, std::ofstream &file) {
 }
 
 int RawDisc::dumpExistingSectorBytes (SecOff sector, std::ofstream &file) {
-    std::vector <uint8_t>& sec = getSectorAt (sector);
+    std::vector <uint8_t>& sec = sectors[sector.sector]; // don't use dedicated function, because it always resizes on read
 
     int i = sector.offset;
-    for (; i < sec.size(); i++)  {
+    for (; i < sec.size(); i++)
         file << sec[i];
-        std::cout << sec [i];
-    }
 
     return settings.bytesPerSector - i;
 }
@@ -31,7 +29,6 @@ void RawDisc::dumpToFile (const std::string &fileName) {
 
     // assume that we never cached too many sectors - that check 
     // happens in addFile
-
     for (int i = 0; i < sectors.size(); i++)
         dumpSectorToFile ({i, 0, settings}, file);
 
@@ -45,20 +42,32 @@ void RawDisc::writeFileToSector (SecOff sector, std::ifstream& file) {
     Sector &outSec = getSectorAt (sector);
 
     file.read ((char*)outSec.data() + sector.offset, outSec.size() - sector.offset);
-
-    for (auto i : getSectorAt (sector))
-        std::cout << (int)i;
-    std::cout << std::endl;
+    
+    outSec [0] = sector.sector;
 }
 
 void RawDisc::writeFileToContiguousSectors (SecOff startSector, const std::filesystem::directory_entry &file) {
     int fSize = file.file_size();
     int fSizeSectors = fSize / settings.bytesPerSector + 1;
     ensureSecExists (startSector + fSizeSectors);
-    std::ifstream fs (file.path().string());
+    std::string fileName = file.path().string();
+    std::ifstream fs (fileName);
 
-    for (int i = 0; i < fSizeSectors; i++) 
+    for (int i = 0; i < fSizeSectors; i++) {
         writeFileToSector (startSector + i, fs);
+    }
+}
+
+void RawDisc::writeArrayToContiguousSectors (SecOff startSector, const std::vector<uint8_t> &data) {
+    std::cout << startSector.sector << " sector " << startSector.offset << " offset " << data.size() << " dataSize \n";
+    int bytesWritten = 0;
+    SecOff currentOffset = startSector;
+    while (bytesWritten < data.size()) {
+        int bytesToWrite = std::min<int> (data.size(), settings.bytesPerSector);
+        uint8_t *dest = getSectorAt(currentOffset).data() + currentOffset.offset;
+        std::memcpy (dest,  data.data() + bytesWritten, bytesToWrite);
+        bytesWritten += bytesToWrite;
+    }
 }
 
 void RawDisc::enforceCorrectSecSize (SecOff sector) {

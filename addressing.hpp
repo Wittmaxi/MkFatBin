@@ -13,9 +13,14 @@ public:
     int sector;
     int offset;
     SecOff (int sec, int off, DiscSettings &set);
+    SecOff (DiscSettings &set);
+    SecOff setPos (int sec, int off = 0);
+    SecOff addOff (int offset);
     SecOff operator+ (const SecOff& other);
     SecOff operator+ (const int sec);
+    SecOff operator- (const SecOff& other);
     SecOff operator++();
+    SecOff operator= (const SecOff &other);
     const ClusOff toClusOff ();
 };
 
@@ -25,8 +30,13 @@ public:
     int cluster;
     int offset;
     ClusOff (int clus, int off, DiscSettings& set);
+    ClusOff (DiscSettings &set);
+    ClusOff setPos (int clus, int off = 0);
+    ClusOff addOff (int offset);
     ClusOff operator+ (const ClusOff& other);
     ClusOff operator+ (const int clus);
+    ClusOff operator- (const ClusOff& other);
     ClusOff operator++();
+    ClusOff operator= (const ClusOff &other);
     const SecOff toSecOff();
 };

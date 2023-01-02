@@ -11,18 +11,21 @@ class FATDriver {
     DiscSettings settings;
     RawDisc disc;
 //////
-    int nextFreeSector;
+    SecOff nextFreeSector;
+    ClusOff firstDataCluster;
+    SecOff rootSector;
+    SecOff FATSector;
 //////
-    int FATsector = 0;
-    int rootSector = 0;
     int rootSizeBytes = 0;
 //////
     void dumpSectorToFile (int sectorNumber, std::ofstream &file);
     void readBootSector (const std::string& fileName);
     void writeSettingsToBootsector();
-    void indexInFAT (int startSector, int numberSectors);
+    void indexInFAT (ClusOff startSector, int numberSectors);
+    void writeFATEntry (ClusOff cluster, uint16_t newValue);
     void writeRootEntry (const std::vector<uint8_t> &fDesc);
-    std::tuple<int, int> calcNextEmptyEntryIndex ();
+    void setupFAT ();
+    SecOff calcNextEmptyEntryIndex ();
 public:
     FATDriver (DiscSettings);
     void dumpToFile (const std::string &fileName);

@@ -4,6 +4,8 @@
 #include <fstream>
 #include <filesystem>
 #include <iostream>
+#include <algorithm>
+#include <cstring>
 #include "settings.hpp"
 #include "addressing.hpp"
 
@@ -18,6 +20,7 @@ class RawDisc {
 public:
     RawDisc (DiscSettings& set);
     void writeFileToContiguousSectors (SecOff startSector, const std::filesystem::directory_entry &file);
+    void writeArrayToContiguousSectors (SecOff startSector, const std::vector<uint8_t> &data);
     void writeFileToSector (SecOff sector, std::ifstream &file);
     void dumpToFile (const std::string &fileName);
     void enforceCorrectSecSize (SecOff sector);

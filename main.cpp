@@ -16,6 +16,7 @@ void traverseFS (std::string &folderName, FATDriver& floppy) {
 int main (int argc, char** argv) {
     CMD::commander cmd(argc, argv);
     ProgramSettings set = processFlags (cmd);
+    if (!set.execute) return 0;
 
     FATDriver floppy {set.flopSet};
 
@@ -25,4 +26,5 @@ int main (int argc, char** argv) {
         floppy.loadBootSector (cmd.getFlagValue("-b"));
 
     floppy.dumpToFile (set.outFile);
+    std::cout << "done\n";
 }

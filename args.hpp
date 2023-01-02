@@ -8,6 +8,7 @@ struct ProgramSettings {
     std::string outFile = "out.bin";
     std::string bootSector = "";
     std::string flopDir = "";
+    bool execute = true;
 };
 
 void displayHelp () {
@@ -42,6 +43,7 @@ ProgramSettings processFlags (CMD::commander &cmd) {
 
     if (cmd.isFlagSet ("-h")) {
         displayHelp();
+        ret.execute = false;
         return ret;
     }
 
