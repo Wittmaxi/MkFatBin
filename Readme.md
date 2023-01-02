@@ -25,6 +25,7 @@ Installation requires clang++ with support for c++17r.
 Not exhaustive - can also be seen as a ToDo list. 
 
 - no support for long names, all names will be truncated to 8 + 3 length.
+- no support for folders. All files will be dumped to the root.
 - Makes some assumptions about the floppy config.
 - only supports FAT16.
 
