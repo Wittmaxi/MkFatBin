@@ -14,7 +14,7 @@ FATDriver::FATDriver (DiscSettings set) : settings (set), disc(set), nextFreeSec
 }
 
 inline void FATDriver::setupFAT () {
-    ClusOff address {0, 0, settings};
+    ClusOff address {-1, 0, settings};
     writeFATEntry (address, 0xFFFF);
     ++address;
     writeFATEntry (address, 0xFFFF);
@@ -23,16 +23,16 @@ inline void FATDriver::setupFAT () {
 
 void FATDriver::writeFATEntry (ClusOff addressCluster, uint16_t value) {
     SecOff offsetInFATMap = FATSector;
-    std::cout << " FatSector " << offsetInFATMap.sector << "\n";
-    offsetInFATMap.addOff ((addressCluster.cluster + 2) * 2); // each cluster takes up two bytes in the FAT
+    std::cout << "writing to cluster " << addressCluster.cluster << "\n";
+    offsetInFATMap.addOff ((addressCluster.cluster + 1) * 2); // each cluster takes up two bytes in the FAT
     std::vector<uint8_t> toWrite ((uint8_t*)&value, (uint8_t*)&value + 2);
     disc.writeArrayToContiguousSectors (offsetInFATMap, toWrite);
 }
 
 // we are putting in the files in a contiguous manner, thus we can simplify this
 void FATDriver::indexInFAT (ClusOff startCluster, int numberClusters) {
-    for (uint16_t i = 0; i < numberClusters; i++) {
-        uint16_t newValue = (i + 1 == numberClusters) ? 0xFFFF : (startCluster.cluster + i);
+    for (uint16_t i = 1; i <= numberClusters; i++) {
+        uint16_t newValue = (i + 1 == numberClusters) ? 0xFFFF : (startCluster.cluster + i + 1);
         writeFATEntry (startCluster + i + 1, newValue);
     }
 }
@@ -53,7 +53,7 @@ void FATDriver::writeRootEntry (const std::vector<uint8_t> &fDesc) {
     if (nextEmptyRoot.sector < 0)
         return;
     
-    std::memcpy (disc.getSectorAt (nextEmptyRoot).data() + nextEmptyRoot.offset, fDesc.data(), 32);
+    disc.writeArrayToContiguousSectors (nextEmptyRoot, fDesc);
 }
 
 void FATDriver::addFile (const std::filesystem::directory_entry &file) {
@@ -61,8 +61,8 @@ void FATDriver::addFile (const std::filesystem::directory_entry &file) {
     
     std::ifstream fs (file.path().string());
 
+
     ClusOff fileStartCluster = nextFreeSector.toClusOff();
-    std::cout << "FSC = " << fileStartCluster.cluster << "\n";
     disc.writeFileToContiguousSectors (nextFreeSector, file);
 
     int sizeInSectors = file.file_size() / settings.bytesPerSector + 1;
@@ -71,9 +71,9 @@ void FATDriver::addFile (const std::filesystem::directory_entry &file) {
     indexInFAT (fileStartCluster, sizeInSectors / settings.sectorsPerCluster);
 
     std::vector <uint8_t> fDesc = getFDesc (file);
-    std::cout << nextFreeSector.sector << "\n";
-    std::cout << fileStartCluster.cluster << "\n";
-    uint16_t filePos = (fileStartCluster - firstDataCluster).cluster;
+    std::cout << "NFS = " << nextFreeSector.sector << "\n";
+    std::cout << "FSC = " << fileStartCluster.cluster << "\n";
+    uint16_t filePos = fileStartCluster.cluster + 1;
     std::cout << filePos << " FILEPOS \n";
     fDesc [26] = (uint8_t) filePos;
     fDesc [27] = (uint8_t) filePos >> 8;

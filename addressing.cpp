@@ -18,7 +18,7 @@ const ClusOff SecOff::toClusOff () {
     int rootDirSectors = settings.rootEntries * 32 / settings.bytesPerSector;
     int firstDataSector = settings.reservedSectors + (settings.numberFAT * settings.sectorsPerFAT) + rootDirSectors;
 
-    int cluster = (sector - firstDataSector) / settings.sectorsPerCluster;
+    int cluster = ((sector - firstDataSector) / settings.sectorsPerCluster) + 1;
 
     return ClusOff (cluster, offset, settings);
 }

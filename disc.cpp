@@ -59,7 +59,6 @@ void RawDisc::writeFileToContiguousSectors (SecOff startSector, const std::files
 }
 
 void RawDisc::writeArrayToContiguousSectors (SecOff startSector, const std::vector<uint8_t> &data) {
-    std::cout << startSector.sector << " sector " << startSector.offset << " offset " << data.size() << " dataSize \n";
     int bytesWritten = 0;
     SecOff currentOffset = startSector;
     while (bytesWritten < data.size()) {
