@@ -71,7 +71,7 @@ void FATDriver::addFile (const std::filesystem::directory_entry &file) {
     ClusOff fileStartCluster = nextFreeSector.toClusOff();
     disc.writeFileToContiguousSectors (nextFreeSector, file);
 
-    int sizeInSectors = file.file_size() / settings.bytesPerSector + 1;
+    int sizeInSectors = file.file_size() / settings.bytesPerSector;
     nextFreeSector = nextFreeSector + sizeInSectors;
 
     indexInFAT (fileStartCluster, sizeInSectors / settings.sectorsPerCluster);
