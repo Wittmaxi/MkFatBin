@@ -1,0 +1,49 @@
+./fat_driver.cpp:26:5: error: use of undeclared identifier 'writeFATEntry'
+    writeFATEntry (address, 0xFFFF);
+    ^
+./fat_driver.cpp:28:5: error: use of undeclared identifier 'writeFATEntry'
+    writeFATEntry (address, 0xFFFF);
+    ^
+./fat_driver.cpp:31:49: error: unknown type name 'value'
+void FATDriver::writeFATEntry (SecOff position, value) {
+                                                ^
+./fat_driver.cpp:32:46: error: use of undeclared identifier 'value'; did you mean 'false'?
+    std::vector<uint8_t> toWrite ((uint8_t*)&value, (uint8_t*)&value + 2);
+                                             ^~~~~
+                                             false
+./fat_driver.cpp:32:45: error: cannot take the address of an rvalue of type 'bool'
+    std::vector<uint8_t> toWrite ((uint8_t*)&value, (uint8_t*)&value + 2);
+                                            ^~~~~~
+./fat_driver.cpp:32:64: error: use of undeclared identifier 'value'; did you mean 'false'?
+    std::vector<uint8_t> toWrite ((uint8_t*)&value, (uint8_t*)&value + 2);
+                                                               ^~~~~
+                                                               false
+./fat_driver.cpp:32:63: error: cannot take the address of an rvalue of type 'bool'
+    std::vector<uint8_t> toWrite ((uint8_t*)&value, (uint8_t*)&value + 2);
+                                                              ^~~~~~
+./fat_driver.cpp:33:41: error: use of undeclared identifier 'offsetInFATMap'
+    disc.writeArrayToContiguousSectors (offsetInFATMap, toWrite);
+                                        ^
+./fat_driver.cpp:39:20: error: use of undeclared identifier 'offsetInFATMapt'; did you mean 'offsetInFATMap'?
+    writeFATEntry (offsetInFATMapt, value);
+                   ^~~~~~~~~~~~~~~
+                   offsetInFATMap
+./fat_driver.cpp:37:12: note: 'offsetInFATMap' declared here
+    SecOff offsetInFATMap = FATSector;
+           ^
+./fat_driver.cpp:45:25: error: use of undeclared identifier 'getSectorAt'
+    uint16_t newValue = getSectorAt(offsetInFATMap)[offsetInFATMap];
+                        ^
+./fat_driver.cpp:46:17: warning: & has lower precedence than ==; == will be evaluated first [-Wparentheses]
+    if (cluster & 1 == 0) {
+                ^~~~~~~~
+./fat_driver.cpp:46:17: note: place parentheses around the '==' expression to silence this warning
+    if (cluster & 1 == 0) {
+                ^
+                  (     )
+./fat_driver.cpp:46:17: note: place parentheses around the & expression to evaluate it first
+    if (cluster & 1 == 0) {
+                ^
+        (          )
+1 warning and 10 errors generated.
+make: *** [makefile:2: default] Error 1

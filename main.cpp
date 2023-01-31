@@ -1,3 +1,4 @@
+/* Copyright 2023 Maximilian Wittmer */
 #include <iostream>
 #include <fstream>
 #include <filesystem>
@@ -6,25 +7,26 @@
 #include "fat_driver.hpp"
 #include "args.hpp"
 
-void traverseFS (std::string &folderName, FATDriver& floppy) {
-    using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
+void traverseFS(const std::string &folderName, FATDriver& floppy) {
+    typedef std::filesystem::recursive_directory_iterator rec_dir_iter;
 
-    for (const auto& dirEntry : recursive_directory_iterator(folderName))
-        floppy.addFile (dirEntry);
+    for (const auto& dirEntry : rec_dir_iter(folderName))
+        floppy.addFile(dirEntry);
 }
 
-int main (int argc, char** argv) {
+int main(int argc, char** argv) {
     CMD::commander cmd(argc, argv);
-    ProgramSettings set = processFlags (cmd);
+    ProgramSettings set = processFlags(cmd);
     if (!set.execute) return 0;
 
     FATDriver floppy {set.flopSet};
 
-    traverseFS (set.flopDir, floppy); // here, we fill the floppy with all of our files
+    traverseFS(set.flopDir, floppy);  // here, we fill the floppy with
+                                      // all of our files
 
     if (cmd.isFlagSet ("-b"))
-        floppy.loadBootSector (cmd.getFlagValue("-b"));
+        floppy.loadBootSector(cmd.getFlagValue("-b"));
 
-    floppy.dumpToFile (set.outFile);
+    floppy.dumpToFile(set.outFile);
     std::cout << "done\n";
 }
