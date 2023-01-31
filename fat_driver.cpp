@@ -37,13 +37,11 @@ void FATDriver::writeFATEntry (int cluster, uint16_t value) {
 }
 
 void FATDriver::writeFATData (SecOff position, uint16_t value) {
-    std::cout << "writing FAT data. Pos: " << position.sector << " | " << position.offset << " value: " << value << "\n";
     std::vector<uint8_t> toWrite ((uint8_t*)&value, (uint8_t*)&value + 2);
     disc.writeArrayToContiguousSectors (position, toWrite);
 }
 
 void FATDriver::writeFAT16Entry (int cluster, uint16_t value) {
-    std::cout << "FAT16\n";
     SecOff offsetInFATMap = FATSector;
     offsetInFATMap.addOff ((cluster - 1 + 2) * 2); // each cluster takes up two bytes in the FAT
     writeFATData (offsetInFATMap, value);
@@ -53,7 +51,6 @@ void FATDriver::writeFAT12Entry (int cluster, uint16_t value) {
     SecOff offsetInFATMap = FATSector;
     offsetInFATMap.addOff ((cluster - 1 + 2) * 1.5); // each cluster takes up two bytes in the FAT
     uint16_t newValue = *reinterpret_cast<uint16_t *>(&disc.getSectorAt(offsetInFATMap)[offsetInFATMap.offset]);
-    std::cout << "newValue: " << newValue << " cluster: " << cluster << "\n";
     if ((cluster & 1) == 0) { // xxxx xxxx | xxxx ----
         newValue &= 0x000F;
         newValue |= value << 4;
