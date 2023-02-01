@@ -7,9 +7,11 @@
 std::string getSmallFileName (const std::filesystem::directory_entry &dir) {
     std::string fileName (dir.path().stem().string());
     fileName.resize (8);
+    for (auto &i: fileName) // replace all zeroes with 
+        if (i == 0) i = ' ';
     std::string extension (dir.path().extension().string());
     extension.resize(4);
-    return fileName + extension.substr(1,3);
+    return fileName + extension.substr(1,3); // get rid of the . in fileext
 }
 
 uint8_t getFileAttribute (const std::filesystem::directory_entry &dir) {

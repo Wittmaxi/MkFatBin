@@ -23,25 +23,43 @@ FATDriver::FATDriver(DiscSettings set)
 
 inline void FATDriver::setupFAT () {
     int address = -1;
+    writeFATEntry (address++, 0xFFFF);
     writeFATEntry (address, 0xFFFF);
-    ++address;
-    writeFATEntry (address, 0xFFFF);
+}
 
+void FATDriver::writeFATEntry (int cluster, uint16_t value) {
+    if(settings.totalSectors < 4085) 
+        writeFAT12Entry (cluster, value);
+    else if(settings.totalSectors < 65525) 
+        writeFAT16Entry (cluster, value);
+    else
+        std::cerr << "FAT32 is not implemented \n";
+}
+
+void FATDriver::writeFATData (SecOff position, uint16_t value) {
+    std::vector<uint8_t> toWrite ((uint8_t*)&value, (uint8_t*)&value + 2);
+    disc.writeArrayToContiguousSectors (position, toWrite);
 }
 
 void FATDriver::writeFAT16Entry (int cluster, uint16_t value) {
     SecOff offsetInFATMap = FATSector;
     offsetInFATMap.addOff ((cluster - 1 + 2) * 2); // each cluster takes up two bytes in the FAT
-    std::vector<uint8_t> toWrite ((uint8_t*)&value, (uint8_t*)&value + 2);
-    disc.writeArrayToContiguousSectors (offsetInFATMap, toWrite);
+    writeFATData (offsetInFATMap, value);
 }
 
 void FATDriver::writeFAT12Entry (int cluster, uint16_t value) {
     SecOff offsetInFATMap = FATSector;
     offsetInFATMap.addOff ((cluster - 1 + 2) * 1.5); // each cluster takes up two bytes in the FAT
-    if (cluster & 1 == 0) {
-        
+    uint16_t newValue = *reinterpret_cast<uint16_t *>(&disc.getSectorAt(offsetInFATMap)[offsetInFATMap.offset]);
+    if ((cluster & 1) == 0) { // xxxx xxxx | xxxx ----
+        newValue &= 0x000F;
+        newValue |= value << 4;
+    } else { // ---- xxxx | xxxx xxxx
+        newValue &= 0xF000;
+        value &= 0x0FFF;
+        newValue |= value;
     }
+    writeFATData (offsetInFATMap, newValue);
 }    
 
 // we are putting in the files in a contiguous manner, thus we can simplify this
